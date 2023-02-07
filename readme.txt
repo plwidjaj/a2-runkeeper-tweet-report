@@ -7,9 +7,9 @@
 - 1/1 Tweet categories
 - 2/2 User-written tweets
 - 3/3 Determining activity type and distance
-- 1/3 Graphing activities by distance
-- 0/2 Implementing the search box
-- 0/3 Populating the table
+- 3/3 Graphing activities by distance
+- 2/2 Implementing the search box
+- 3/3 Populating the table
 
 2. How long, in hours, did it take you to complete this assignment?
 
