@@ -92,7 +92,7 @@ function parseTweets(runkeeper_tweets) {
 	weekday_distances = new Array()
 	weekend_and_weekday = new Map ()
 
-	const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+	const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 	const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
 	for (var i = 0; i < tweet_array.length; i++) {
@@ -158,25 +158,124 @@ function parseTweets(runkeeper_tweets) {
 	document.getElementById('weekdayOrWeekendLonger').innerText = weekdayOrWeekendLonger;
 	document.getElementById('aggregate').onclick = function() { showChart()}
 
-	function showChart() {
-		console.log("hi")
-		activity_vis_spec = {
+	//Gathering data for distance visualization graph
+	const topthree_tweets = []
+	var distance_data = []
+
+	for (var i = 0; i < tweet_array.length; i++) {
+		if (tweet_array[i].activityType == "run" || tweet_array[i].activityType == "walk" || tweet_array[i].activityType == "bike") {
+			topthree_tweets.push(tweet_array[i])
+		}
+	}
+
+
+	for (var i = 0; i < topthree_tweets.length; i++) {
+		var data = {}
+		data['Day'] = weekdays[topthree_tweets[i].time.getDay()]
+		data['Activity Type'] = topthree_tweets[i].activityType
+		data['Distance'] = topthree_tweets[i].distance
+		distance_data.push(data)
+	}
+
+	console.log(distance_data)
+
+	
+	activity_vis_spec = {
+		"$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+		"description": "A graph of the number of Tweets containing each type of activity.",
+		"width": 700,
+		"data": {
+		  "values": all_activities
+		},
+		"mark": "bar",
+		"encoding": { 
+		  "x": {"field": "data", "type": "nominal"},
+		  "y": {"aggregate": "count", "type": "quantitative"}
+		}
+	  };
+	  vegaEmbed('#activityVis', activity_vis_spec, {actions:false});
+
+	  distance_vis_spec = {
+		"$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+		  "description": "A scatterplot showing body mass and flipper lengths of penguins.",
+		  "width": 700,
+		"data": {
+			"values": distance_data
+		},
+		  "mark": "point",
+		 "encoding": {
+			"x": {
+				"field": "Day",
+				"type": "ordinal",
+				"sort": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+				"scale": {"zero": false}
+			},
+			"y": {
+				"field": "Distance",
+				"type": "quantitative",
+				"scale": {"zero": false}
+			},
+		"color": {"field": "Activity Type", "type": "nominal"},
+		"shape": {"field": "Activity Type", "type": "nominal"}
+			}
+
+		}
+	vegaEmbed('#distanceVis', distance_vis_spec, {actions:false});
+
+		distance_vis_aggregated = {
 			"$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-			"description": "A graph of the number of Tweets containing each type of activity.",
+			"description": "A scatterplot showing body mass and flipper lengths of penguins.",
 			"width": 700,
 			"data": {
-			  "values": all_activities
+				"values": distance_data
 			},
-			"mark": "bar",
-			"encoding": { 
-			  "x": {"field": "data", "type": "nominal"},
-			  "y": {"aggregate": "count", "type": "quantitative"}
-			}
-			//TODO: Add mark and encoding
-		  };
-		  vegaEmbed('#activityVis', activity_vis_spec, {actions:false});
-	
-	}
+			"mark": "point",
+			"encoding": {
+				"x": {
+					"field": "Day",
+					"type": "ordinal",
+					"sort": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+					"scale": {"zero": false}
+				},
+				"y": {
+					"field": "Distance",
+					"aggregate": "mean",
+					"type": "quantitative",
+					"scale": {"zero": false}
+				},
+			"color": {"field": "Activity Type", "type": "nominal"},
+			"shape": {"field": "Activity Type", "type": "nominal"}
+				}
+
+		}
+		vegaEmbed('#distanceVisAggregated', distance_vis_aggregated, {actions:false});
+
+		var button = document.getElementById("aggregate")
+		var all = document.getElementById("distanceVis")
+		var means = document.getElementById("distanceVisAggregated")
+
+		all.style.display = "none"
+		means.style.display = "none"
+
+	function showChart() {
+
+
+		if (button.textContent == "Show means") {
+			button.textContent = "Show all activities"
+			means.style.display = "block"
+			all.style.display = "none"
+			
+		}
+		else {
+			button.textContent = 'Show means'
+			means.style.display = "none"
+			all.style.display = "block"
+			
+		}
+
+
+
+}
 
 
 }

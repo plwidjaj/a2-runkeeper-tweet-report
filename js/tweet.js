@@ -91,6 +91,6 @@ class Tweet {
     }
     getHTMLTableRow(rowNumber) {
         //TODO: return a table row which summarizes the tweet with a clickable link to the RunKeeper activity
-        return "<tr></tr>";
+        return "<tr> </tr>";
     }
 }

@@ -24,17 +24,44 @@ function parseTweets(runkeeper_tweets) {
 	
 }
 
+
+
 function addEventHandlerForSearch() {
 	//TODO: Search the written tweets as text is entered into the search box, and add them to the table
-	var userInput = document.getElementById("textFilter").value;
+	const text_filter_field = document.getElementById("textFilter")
+	const table = document.getElementById("tweetTable")
+	text_filter_field.addEventListener("input", () => {
+		table.innerHTML = ""
+		document.getElementById('searchText').innerText = document.getElementById("textFilter").value;
+		var relevant_tweets = $.grep(written_array, function (f) {
+			return f.text.includes(document.getElementById("textFilter").value)
+		})
+		document.getElementById('searchCount').innerText = relevant_tweets.length
+		for (var i = 0; i < relevant_tweets.length; i++) {
+			var row = table.insertRow(i)
+			//relevant_tweets[i].getHTMLTableRow(i)
+			var number = row.insertCell(0);
+			var activity = row.insertCell(1);
+			var tweet = row.insertCell(2)
+			const url = /(https:\/\/t.co\/([a-zA-Z0-9]){10})/
+			tweet_url = relevant_tweets[i].text.match(url)[0]
 
-	userInput.onkeyup = function() {
-		document.getElementById('searchCount').innerText = userInput.value;
+			number.innerHTML = i.toString();
+			activity.innerHTML = relevant_tweets[i].activityType	
+			tweet.innerHTML = relevant_tweets[i].text	
+
+		}
+
+
 	}
+	)
+
 
 
 
 }
+
+
 
 //Wait for the DOM to load
 document.addEventListener('DOMContentLoaded', function (event) {
